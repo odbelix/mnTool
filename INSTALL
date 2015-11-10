@@ -1,0 +1,9 @@
+INSTALL
+
+For generate the install of scripts:
+
+1. Go to directory of proyect
+2. Execute script in root mode init.py:
+
+	python init.py
+

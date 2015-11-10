@@ -1,0 +1,82 @@
+mntools
+
+Description:
+
+	mntools is a group of tools that allow manage and handle of device exists in the data base, it has options of add new elements
+	set and update elements, delete elements, search elements and generate trees of information by serial, IP, or full device and
+
+Install:
+
+	See file INSTALL
+
+Required:
+	
+	Set elements in file init_config_database.py, indicate data for connect to data base, replacing:
+	
+	cfg.set("connection", "host", "host to use")
+	cfg.set("connection", "data_base", "name of data base")
+	cfg.set("connection", "user", "user of data base")
+	cfg.set("connection", "password", "password of data base")
+
+	Install module python psycopg2
+
+Exceute:
+
+	mntools -option param
+
+	mntools -option param
+
+	Insert option
+
+	-ic, --insert_campus, Add new campus
+	-ie, --insert_building, Add new building
+	-id, --insert_device, Add new device
+	-idp, --insert_device_father, Add new device with its father
+	-im, --insert_marker, Add new marker
+	-imo, --insert_model, Add new model
+	-ir, --insert_rack, Add new rack
+	-in, --insert_level, Add new level
+	-it, --insert_kind_device, Add new kind of device
+	-ien, --insert_kind_link, Add new kind of link
+
+	Delete option
+
+	-dc, --delete_campus Delete campus by id
+	-de, --delete_building, Delete building by id
+	-dd, --delete_device, Delete device by serial
+	-dm, --delete_marker, Delete marker by id
+	-dmo, --delete_model, Delete model by id
+	-dr, --delete_rack, Delete rack by id
+	-dn, --delete_level, Delete level by id
+	-dt, --delete_kind_device, Delete kind of device by id
+	-den, --delete_kind_link, Delete kind of link by id
+
+	Update option
+
+	-uc, --update_campus, Update campus by id
+	-ue, --update_building, Update building by id
+	-ud, --update_device, Update device by serial
+	-um, --update_marker, Update marker by id
+	-umo, --update_model, Update model by id
+	-ur, --update_rack, Update rack by id
+	-un, --update_level, Update level by id
+	-ut, --update_kind_device, Update kind of device by id
+	-uen, --update_kind_link, Update kind of link by id
+
+	Query option
+
+	-qc, --query_campus, List all campus whit its information
+	-qe, --query_edificios, List all building whit its information
+	-ql, --list_device, List all devices
+	-qlc, --list_device_full, List all devices whit its information
+	-qsw, --list_switch, List all Switch
+	-qrsw, --list_router, List all Router
+	-qsrv, --list_server, List all Servers
+	-qqu, --create_query, Make a query, action=store_true
+	
+	Tree option
+
+	-qtip, --tree_dispo_ip, Search devices and asociated devices by ip
+	-td, --tree_device, Create tree all device, action=store_true
+	-ft, --tree_full, Create tree with all information in data base
+	-qt, --tree_dispo, Search devices and asociated devices by serial

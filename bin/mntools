@@ -1,0 +1,621 @@
+#!/usr/bin/env python
+
+# mntools, script white tools that allow manage information of device in data base existents in 
+# university, is possible make:
+# Insert in database
+# Delete in database
+# Update in database
+# Generate tree with information of data base
+# Search information in data base
+# 
+# Copyright (C) 20/10/2015 David Alfredo Medina Ortiz  dmedina11@alumnos.utalca.cl
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software Foundation,
+# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+
+#Modules to use
+import argparse
+import sys
+import os
+from ModulosDevice.Cruds import Query
+from ModulosDevice.Cruds import delete
+from ModulosDevice.Cruds import update
+from ModulosDevice.GenerationTree import MakeTreeFull
+from ModulosDevice.GenerationTree import MakeTreeDispositivos
+
+#validate if is possible cast input to int, return o element cast to int, in other case exit program
+def ValidateInput(input_element):
+
+	try:
+		return int(input_element)
+	except:
+		print "You must input int type element"
+		sys.exit(1)
+	
+#create help message
+def CreateHelpMessage():
+
+	help_message = {}#dictionary for store message
+	help_message.update({'campus':'Add new campus'})
+	help_message.update({'building':'Add new building'})
+	help_message.update({'device':'Add new device'})
+	help_message.update({'device_father':'Add new device with its father'})
+	help_message.update({'marker': 'Add new marker'})
+	help_message.update({'model': 'Add new model'})
+	help_message.update({'rack': 'Add new rack'})
+	help_message.update({'level': 'Add new level'})
+	help_message.update({'kind': 'Add new kind of device'})
+	help_message.update({'link': 'Add new kind of link'})
+
+	return help_message
+
+#principal function
+def main ():
+
+	#instance of argparse
+	parser = argparse.ArgumentParser(
+	formatter_class=argparse.RawDescriptionHelpFormatter,
+	description="mnTools - Options",
+	epilog=".....................\n.....................")
+
+	#make dicctionary with help message
+	help_message = CreateHelpMessage()
+	#add insert option
+	parser.add_argument("-ic", "--insert_campus", help=help_message['campus'],action="store_true")
+	parser.add_argument("-ie", "--insert_building", help=help_message['building'],action="store_true")
+	parser.add_argument("-id", "--insert_device", help=help_message['device'],action="store_true")
+	parser.add_argument("-idp", "--insert_device_father", help=help_message['device_father'],action="store_true")
+	parser.add_argument("-im", "--insert_marker", help=help_message['marker'],action="store_true")
+	parser.add_argument("-imo", "--insert_model", help=help_message['model'],action="store_true")
+	parser.add_argument("-ir", "--insert_rack", help=help_message['rack'],action="store_true")
+	parser.add_argument("-in", "--insert_level", help=help_message['level'],action="store_true")
+	parser.add_argument("-it", "--insert_kind_device", help=help_message['kind'],action="store_true")
+	parser.add_argument("-ien", "--insert_kind_link", help=help_message['link'],action="store_true")
+
+	#add delete option
+	parser.add_argument("-dc", "--delete_campus", help="Delete campus by id")
+	parser.add_argument("-de", "--delete_building", help="Delete building by id")
+	parser.add_argument("-dd", "--delete_device", help="Delete device by serial")
+	parser.add_argument("-dm", "--delete_marker", help="Delete marker by id")
+	parser.add_argument("-dmo", "--delete_model", help="Delete model by id")
+	parser.add_argument("-dr", "--delete_rack", help="Delete rack by id")
+	parser.add_argument("-dn", "--delete_level", help="Delete level by id")
+	parser.add_argument("-dt", "--delete_kind_device", help="Delete kind of device by id")
+	parser.add_argument("-den", "--delete_kind_link", help="Delete kind of link by id")
+
+	#add update option
+	parser.add_argument("-uc", "--update_campus", help="Update campus by id")
+	parser.add_argument("-ue", "--update_building", help="Update building by id")
+	parser.add_argument("-ud", "--update_device", help="Update device by serial")
+	parser.add_argument("-um", "--update_marker", help="Update marker by id")
+	parser.add_argument("-umo", "--update_model", help="Update model by id")
+	parser.add_argument("-ur", "--update_rack", help="Update rack by id")
+	parser.add_argument("-un", "--update_level", help="Update level by id")
+	parser.add_argument("-ut", "--update_kind_device", help="Update kind of device by id")
+	parser.add_argument("-uen", "--update_kind_link", help="Update kind of link by id")
+
+	#add query option
+	parser.add_argument("-qc", "--query_campus", help="List all campus whit its information",action="store_true")
+	parser.add_argument("-qe", "--query_edificios", help="List all building whit its information",action="store_true")
+	parser.add_argument("-ql", "--list_device", help="List all devices",action="store_true")
+	parser.add_argument("-qlc", "--list_device_full", help="List all devices whit its information",action="store_true")
+	parser.add_argument("-qsw", "--list_switch", help="List all Switch",action="store_true")
+	parser.add_argument("-qrsw", "--list_router", help="List all Router",action="store_true")
+	parser.add_argument("-qsrv", "--list_server", help="List all Servers",action="store_true")
+	parser.add_argument("-qqu", "--create_query", help="Make a query", action="store_true")
+	parser.add_argument("-qt", "--tree_dispo", help="Search devices and asociated devices by serial")
+	#add tree option
+	parser.add_argument("-qtip", "--tree_dispo_ip", help="Search devices and asociated devices by ip")
+	parser.add_argument("-td", "--tree_device", help="Create tree all device", action="store_true")
+	parser.add_argument("-ft", "--tree_full", help="Create tree with all information in data base", action="store_true")
+
+	#Parse argv to args 
+	args = parser.parse_args()
+	
+	#selection option
+	#add marker
+	if args.insert_marker:
+		Query.ShowElementsinDataBase("select * from marca", "Elements existents in table marca")
+		id_marker = Query.GetMaxIDinTable('marca', 'id_marca')
+		#evaluate id of marker
+		if id_marker>=99:
+			print "Is not possible add new marker because id is over 99"
+		else:
+			
+			id_marker = id_marker+1
+			name_marca= raw_input("Input new marker: ")
+		
+			#evaluate if exists elements
+			query = "select * from marca where marca.id_marca = %d"%id_marker
+			if Query.ExistElementInDB(query) == 1:
+				query = "INSERT INTO marca VALUES (%d, '%s')"% (id_marker, name_marca)
+				Query.InsertDB(query)
+			else:
+				print "element already in data base"
+		#delete parcial file..
+		os.system("rm temp")
+	#add kind device
+	elif args.insert_kind_device:
+		Query.ShowElementsinDataBase("select * from tipo_disp", "Elements existents in table tipo_disp")
+		id_kind = Query.GetMaxIDinTable('tipo_disp', 'id_tipo_disp')
+		#evaluate id of marker
+		if id_kind >=99:
+			print "Is not possible add new marker because id is over 99"
+		else:
+			id_kind+=1
+			kind= raw_input("Input name of kind device: ")
+			#evaluate if exists elements
+			query = "select * from tipo_disp where id_tipo_disp = %d" % id_kind
+			if Query.ExistElementInDB(query) == 1:
+				query = "INSERT INTO tipo_disp VALUES (%d, '%s')" % (id_kind, kind)
+				Query.InsertDB(query)
+			else:
+				print "element already in data base"
+		os.system("rm temp")
+
+	#add new model
+	elif args.insert_model:
+		Query.ShowElementsinDataBase("select * from modelo", "Elements existents in table modelo")
+		id_model = Query.GetMaxIDinTable('modelo', 'id_modelo')
+		#evaluamos si el id obtenido sobrepasa los 99
+		if id_model>=99:
+			print "Is not possible add new marker because id is over 99"
+		else:
+			id_model+=1
+			id_kind = raw_input("Input id of kind device: ")
+			id_kind = ValidateInput(id_kind)
+			id_marker = raw_input("Input id of marker: ")
+			id_marker = ValidateInput(id_marker)
+			name_model = raw_input("Input name of model: ")
+			#evaluate if exist element
+			query = "select * from modelo where id_modelo = %d" % id_model
+			if Query.ExistElementInDB(query) == 1:
+				#evaluate if exist kind device
+				query = "select * from tipo_disp where id_tipo_disp = %d" % id_kind
+				if (Query.ExistElementInDB(query) == 0):
+					#evaluate if existe id marker
+					query = "select * from marca where marca.id_marca = %d"%id_marker
+					if (Query.ExistElementInDB(query) == 0):				
+						query = "INSERT INTO modelo VALUES (%d, %d, %d, '%s')"% (id_model, id_kind, id_marker, name_model)
+						Query.InsertDB(query)
+					else:
+						print "ID of marker is not registered in data base"
+				else:
+					print "ID of kind device is not registered in data base"
+			else:
+				print "element already in data base"		
+		os.system("rm temp")
+				
+	#add new campus
+	elif args.insert_campus:
+
+		Query.ShowElementsinDataBase("select * from campus", "Elements existents in table campus")
+		id_campus = Query.GetMaxIDinTable('campus', 'id_campus')
+		#evaluate id campus
+		if id_campus>=99:
+			print "Is not possible add new marker because id is over 99"
+		else:
+			id_campus+=1
+			name = raw_input("Input name of campus: ")
+			#evaluate if existe element
+			query = "select * from campus where id_campus = %d" % id_campus
+			if Query.ExistElementInDB(query) == 1:
+				query = "INSERT INTO campus VALUES (%d, '%s')" %(id_campus, name)
+				Query.InsertDB(query)
+			else:
+				print "element already in data base"
+		os.system("rm temp")
+
+	#add new building
+	elif args.insert_building:
+		Query.ShowElementsinDataBase("select * from edificio", "Elements existents in table edificio")
+		id_building = Query.GetMaxIDinTable('edificio', 'id_edif')
+		#evaluate id_building
+		if id_building>=99:
+			print "Is not possible add new marker because id is over 99"
+		else:
+			id_building+=1
+			id_campus = raw_input("Input ID of campus: ")
+			id_campus = ValidateInput(id_campus)
+			name = raw_input("Input name of building: ")
+			#evaluate if exists elements
+			query = "select * from edificio where id_edif = %d" % id_building
+			if Query.ExistElementInDB(query) == 1:
+
+				#evaluate if exist campus
+				query = "select * from campus where id_campus = %d" % id_campus
+				if Query.ExistElementInDB(query) == 0:
+					query = "INSERT INTO edificio VALUES (%d, %d, '%s')"%(id_building, id_campus, name)
+					Query.InsertDB(query)
+				else:
+					print "ID campus is not registered in data base"
+			else:
+				print "element already in data base"
+		os.system("rm temp")
+	#add new level
+	elif args.insert_level:
+		Query.ShowElementsinDataBase("select * from nivel", "Elements existents in table nivel")
+		id_level = Query.GetMaxIDinTable('nivel', 'id_nivel')
+		#evaluate id_level
+		if id_level >=99:
+			print "Is not possible add new marker because id is over 99"
+		else:
+			id_level+=1
+			name_level = raw_input("Input name of level: ")
+			#evaluate if exists element
+			query = "select * from nivel where id_nivel = %d" % id_level
+			if Query.ExistElementInDB(query) == 1:
+				query = "INSERT INTO nivel VALUES (%d, '%s')" % (id_level, name_level)
+				Query.InsertDB(query)
+			else:
+				print "element already in data base"
+		os.system("rm temp")		
+
+	#add new rack
+	elif args.insert_rack:
+		Query.ShowElementsinDataBase("select * from rack", "Elements existents in table rack")
+		id_rack = Query.GetMaxIDinTable('rack', 'id_rack')
+		#evaluate id_rack
+		if id_rack>=99:
+			print "Is not possible add new marker because id is over 99"
+		else:
+			id_rack+=1
+			id_level = raw_input("Input id level: ")
+			id_level = ValidateInput(id_level)
+			id_building = raw_input("Input id of building: ")
+			id_building = ValidateInput(id_building)
+			detail = raw_input("Input detail of rack: ")
+			#evaluate if elementes exist
+			query = "select * from rack where id_rack = %d" % id_rack
+			if Query.ExistElementInDB(query) == 1:
+
+				#evaluate if level exists
+				query = "select * from nivel where id_nivel = %d" % id_level
+				if Query.ExistElementInDB(query) == 0:
+
+					#evaluate if building exists
+					query = "select * from edificio where id_edif = %d" % id_building
+					if Query.ExistElementInDB(query) == 0:				
+						query = "INSERT INTO rack VALUES (%d, %d, %d, '%s')" %(id_rack, id_level, id_building, detail)
+						Query.InsertDB(query)
+					else:
+						print "ID building is not registered in data base"
+				else:
+					print "ID level is not registered in data base"
+			else:
+				print "element already in data base"
+		os.system("rm temp")
+
+	#add new device
+	elif args.insert_device:
+		Query.ShowElementsinDataBase("select * from dispositivo", "Elements existents in table dispositivo")
+		serial = raw_input("Input serial device: ")
+		id_model = raw_input("Input id model: ")
+		id_model = ValidateInput(id_model)
+		name = raw_input("Input name device: ")
+		obs = raw_input("Input observation of device: ")
+		ip_device = raw_input("Input IP of device: ")
+		id_rack = raw_input("Input ID rack: ")
+		id_rack = ValidateInput(id_rack)
+		ptas_disp = raw_input("Input number of ptas of device: ")
+		ptas_disp = ValidateInput(ptas_disp)
+
+		#evaluate if exists device
+		query = "select * from dispositivo where serial = '%s'" % serial
+		if Query.ExistElementInDB(query) == 1:
+
+			#evaluate if exists model
+			query = "select * from modelo where id_modelo = %d" % id_model
+			if Query.ExistElementInDB(query) == 0:
+
+				#evaluate if exists rack
+				query = "select * from rack where id_rack = %d" % id_rack
+				if Query.ExistElementInDB(query) == 0:
+
+					#evaluate if IP exist
+					query = "select * from dispositivo where ip_disp = '%s'" % ip_device
+					if Query.ExistElementInDB(query) == 1:
+						query = "INSERT INTO dispositivo VALUES ('%s', %d, '%s', '%s', '%s', %d, %d)" % (serial, id_model, name, obs, ip_device, id_rack, ptas_disp)
+						Query.InsertDB(query)
+					else:
+						print "IP already in data base"
+				else:
+					print "ID rack not registered in data base"
+			else:
+				print "ID model not registered in data base"
+		else:
+			print "element already in data base"	
+		os.system("rm temp")
+
+	#agregamos un dispositivo con su dispositivo padre...
+	elif args.insert_device_father:
+
+		Query.ShowElementsinDataBase("select * from dispositivo", "Elements existents in table dispositivo")
+		serial = raw_input("Input serial device: ")
+		id_model = raw_input("Input id model: ")
+		id_model = ValidateInput(id_model)
+		name = raw_input("Input name device: ")
+		obs = raw_input("Input observation of device: ")
+		ip_device = raw_input("Input IP of device: ")
+		id_rack = raw_input("Input ID rack: ")
+		id_rack = ValidateInput(id_rack)
+		ptas_disp = raw_input("Input number of ptas of device: ")
+		ptas_disp = ValidateInput(ptas_disp)
+		father = raw_input("Input serial device father: ")
+		kind_link = raw_input("Input id of kind link: ")
+		kind_link = ValidateInput(kind_link)
+		
+		query = "select * from dispositivo where serial = '%s'" % serial
+		if Query.ExistElementInDB(query) == 1:
+			query = "select * from modelo where id_modelo = %d" % id_model
+			if Query.ExistElementInDB(query) == 0:
+				query = "select * from rack where id_rack = %d" % id_rack
+				if Query.ExistElementInDB(query) == 0:
+					query = "select * from dispositivo where serial = '%s'"	% father #solo si existe el padre se puede agregar el elemento...
+					if Query.ExistElementInDB(query) == 0:
+						query = "select * from dispositivo where ip_disp = '%s'" % ip_device
+						if Query.ExistElementInDB(query) == 1:
+							query = "INSERT INTO dispositivo VALUES ('%s', %d, '%s', '%s', '%s', %d, %d)" % (serial, id_model, name, obs, ip_device, id_rack, ptas_disp)
+							print "Add element in device"
+							Query.InsertDB(query)
+							#formamos la consulta para anidar el equipo...
+							query = "INSERT INTO conecta VALUES ('%s', '%s', %d)" % (father, serial, kind_link)
+							print "Add element in conecta table"
+							Query.InsertDB(query)
+						else:
+							print "IP already in data base"
+					else:
+						print "Serial father not exists in data base"
+				else:
+					print "ID rack not registered in data base"
+			else:
+				print "ID model not registered in data base"	
+		else:
+			print "element already in data base"
+		os.system("rm temp")	
+	#add new kinf link
+	elif args.insert_kind_link:
+		Query.ShowElementsinDataBase("select * from tipo_enlace", "Elements existents in table tipo_enlace")
+		id_kind_link= Query.GetMaxIDinTable('tipo_enlace', 'id_tipo_enlace')
+		#evaluate id kind link
+		if id_kind_link>=99:
+			print "Is not possible add new marker because id is over 99"
+		else:
+			id_kind_link+=1
+			name_link = raw_input("Input name of kind link: ")
+			#evaluate if exist
+			query = "select * from tipo_enlace where id_tipo_enlace = %d" % id_kind_link
+			if Query.ExistElementInDB(query) == 1:
+				query = "INSERT INTO tipo_enlace VALUES (%d, '%s')" % (id_kind_link, name_link)
+				Query.InsertDB(query)
+			else:
+				print "element already in data base"
+		os.system("rm temp")		
+	#delete campus
+	elif args.delete_campus:
+		id_campus = ValidateInput(args.delete_campus)
+		delete.DeleteCampus(id_campus)
+	
+	#delete building
+	elif args.delete_building:
+		id_building = ValidateInput(args.delete_building)
+		delete.DeleteEdificio(id_building)
+
+	#delete marker
+	elif args.delete_marker:
+		id_marker = ValidateInput(args.delete_marker)
+		delete.DeleteMarca(id_marker)
+
+	#delete model
+	elif args.delete_model:
+		id_model = ValidateInput(args.delete_model)
+		delete.DeleteModelo(id_model)
+
+	#delete rack
+	elif args.delete_rack:
+		id_rack = ValidateInput(args.delete_rack)
+		delete.DeleteRack(id_rack)
+
+	#delete level
+	elif args.delete_level:
+		id_level = ValidateInput(args.delete_level)
+		delete.DeleteNivel(id_level)
+	
+	#delete device
+	elif args.delete_device:
+		delete.DeleteDevice(args.delete_device)
+
+	#delete kind device
+	elif args.delete_kind_device:
+		id_kind_device = ValidateInput(args.delete_kind_device)
+		delete.DeleteTipoDispositivo(id_kind_device)
+	
+	#delete kind link
+	elif args.delete_kind_link:
+		id_kind_link = ValidateInput(args.delete_kind_link)
+		delete.DeleteTipoEnlace(id_kind_link)
+	
+	#update device
+	elif args.update_device:
+
+		#evaluate if serial exist
+		query = "select * from dispositivo where serial = '%s'"% args.update_device
+		if Query.ExistElementInDB(query) == 0:
+			update.UpdateDevice(args.update_device)
+		else:
+			print "Serial not exists in dabta base"
+
+	#update level
+	elif args.update_level:
+
+		id_level = ValidateInput(args.update_level)
+		#evaluate if id level exist
+		query = "select * from nivel where id_nivel = %d" % id_level
+		if Query.ExistElementInDB(query) == 0:
+			update.UpdateNivel(id_level)
+		else:
+			print "ID level not exists in data base"
+
+	#update campus
+	elif args.update_campus:
+
+		id_campus = ValidateInput(args.update_campus)
+		#evaluate if id campus exists
+		query = "select * from campus where id_campus = %d" % id_campus
+		if Query.ExistElementInDB(query) == 0:
+			update.UpdateCampus(id_campus)
+		else:
+			print "ID campus not exists in data base"	
+	
+	#update building
+	elif args.update_building:
+
+		id_building = ValidateInput(args.update_building)
+		#evaluate if id building exists
+		query = "select * from edificio where id_edif = %d" % id_building
+		if Query.ExistElementInDB(query) == 0:
+			update.UpdateEdificio(id_building)
+		else:
+			print "ID building not exists in data base"
+	
+	#update marker
+	elif args.update_marker:
+
+		id_marker = ValidateInput(args.update_marker)
+		#evaluate if existe id marker
+		query = "select * from marca where id_marca = %d" % id_marker
+		if Query.ExistElementInDB(query) == 0:
+			update.UpdateMarca(id_marker)
+		else:
+			print "ID marker not exists in data base"
+	
+	#update model
+	elif args.update_model:
+
+		id_model = ValidateInput(args.update_model)
+		#evaluate if exists id model
+		query = "select * from modelo where id_modelo = %d" % id_model
+		if Query.ExistElementInDB(query) == 0:
+			update.UpdateModelo(id_model)
+		else:
+			print "ID model not exists in data base"
+				
+	#update rack
+	elif args.update_rack:
+		id_rack = ValidateInput(args.update_rack)
+		#evaluate if id rack exists
+		query = "select * from rack where id_rack = %d" % id_rack
+		if Query.ExistElementInDB(query) == 0:
+			update.UpdateRack(id_rack)
+		else:
+			print "ID rack not exists in data base"
+	
+	#update kind device
+	elif args.update_kind_device:
+		id_kind_device = ValidateInput(args.update_kind_device)
+		#evaluate if id kind_device exists
+		query = "select * from tipo_disp where id_tipo_disp = %d" %id_kind_device
+		if Query.ExistElementInDB(query) == 0:
+			update.UpdateKindDevice(id_kind_device)
+		else:
+			print "ID kind device not exists in data base"
+
+	#update kind link
+	elif args.update_kind_link:
+		id_kind_link = ValidateInput(args.update_kind_link)
+		#evaluate if id kind link exists
+		query = "select * from tipo_enlace where id_tipo_enlace = %d" % id_kind_link
+		if Query.ExistElementInDB(query) == 0:
+			update.UpdateEnlace(id_kind_link)
+		else:
+			print "ID kind link not exists in data base"
+	
+	#all switchs
+	elif args.list_switch:
+		query = "select dispositivo.serial, dispositivo.nom_disp, dispositivo.ip_disp, modelo.nom_modelo, tipo_disp.nom_tipo_disp, marca.nom_marca from dispositivo join modelo on (dispositivo.id_modelo = modelo.id_modelo) join tipo_disp on (tipo_disp.id_tipo_disp = modelo.id_tipo_disp) join marca on (marca.id_marca = modelo.id_marca) where nom_disp like '%sw%'"
+		Query.MakeQuery(query)
+
+	#all router
+	elif args.list_router:
+		query = "select dispositivo.serial, dispositivo.nom_disp, dispositivo.ip_disp, modelo.nom_modelo, tipo_disp.nom_tipo_disp, marca.nom_marca from dispositivo join modelo on (dispositivo.id_modelo = modelo.id_modelo) join tipo_disp on (tipo_disp.id_tipo_disp = modelo.id_tipo_disp) join marca on (marca.id_marca = modelo.id_marca) where nom_disp like '%rsw%'"
+		Query.MakeQuery(query)
+
+	#all servers
+	elif args.list_server:
+		query = "select dispositivo.serial, dispositivo.nom_disp, dispositivo.ip_disp, modelo.nom_modelo, tipo_disp.nom_tipo_disp, marca.nom_marca from dispositivo join modelo on (dispositivo.id_modelo = modelo.id_modelo) join tipo_disp on (tipo_disp.id_tipo_disp = modelo.id_tipo_disp) join marca on (marca.id_marca = modelo.id_marca) where nom_disp like '%srv%'"
+		Query.MakeQuery(query)
+
+	#all device only name
+	elif args.list_device:
+		query = "select dispositivo.nom_disp from dispositivo"
+		Query.MakeQuery(query)
+	
+	#all device full
+	elif args.list_device_full:
+		query = "select dispositivo.serial, dispositivo.nom_disp, dispositivo.ip_disp, modelo.nom_modelo, tipo_disp.nom_tipo_disp, marca.nom_marca from dispositivo join modelo on (dispositivo.id_modelo = modelo.id_modelo) join tipo_disp on (tipo_disp.id_tipo_disp = modelo.id_tipo_disp) join marca on (marca.id_marca = modelo.id_marca)"
+		Query.MakeQuery(query)
+
+	#all campus
+	elif args.query_campus:
+		query = "select * from campus"
+		Query.MakeQuery(query)
+
+	#all building
+	elif args.query_edificios:
+		query = "select id_edif, nom_edif, nom_campus from edificio join campus on (edificio.id_campus = campus.id_campus)"
+		Query.MakeQuery(query)
+	
+	#make query
+	elif args.create_query:
+		query = raw_input("Input your query: ")
+		Query.MakeQuery(query)
+	
+	#make tree device by serial
+	elif args.tree_dispo:
+		lista_elements = []
+		Query.CreateTreeBySerial(args.tree_dispo, lista_elements, '')
+
+	#make device tree by ip
+	elif args.tree_dispo_ip:
+
+		lista_elements = []
+		query = "select COUNT(*) from dispositivo where ip_disp = '%s' group by ip_disp" % args.tree_dispo_ip
+		#evaluate ip device
+		if Query.IPisUnica(query) == 1:
+
+			#get serial of device by ip
+			query = "select serial from dispositivo where ip_disp = '%s'" % args.tree_dispo_ip
+			serial = Query.GetSerialbyIP(query)
+			Query.CreateTreeBySerial(serial, lista_elements, '')			
+		elif Query.IPisUnica(query) == 0:
+			print "IP not exists in data base"
+		else:
+			print "IP must be unique"
+
+	#creation Full tree...
+	elif args.tree_full:
+		MakeTreeFull.MakeTree()
+	
+	#make tree all device
+	elif args.tree_device:
+		MakeTreeDispositivos.MakeTreeDevice()
+	
+	else:
+		#No set any argument
+		parser.print_help()
+
+	return 0
+
+if __name__ == '__main__':
+	main()

@@ -90,6 +90,21 @@ def InsertDB(query):
 		print 'Error %s', e
 		sys.exit(1)
 
+<<<<<<< HEAD
+#function that generate a insert in data base received by arguments.
+#query => is the query for insert data in data base 
+def InsertDBWithOutMessage(query):
+
+	#start connection whit data base
+	database = Comunication.BeginComunication()
+	try:#error and validation 
+		database[1].execute(query)#execute the query
+		database[0].commit()#commit the data base whit new information inserted.
+	except psycopg2.DatabaseError, e:
+		print 'Error %s', e
+		sys.exit(1)
+=======
+>>>>>>> 02c3ebb0958c363c2794afd4063fb21fbbed3589
 #function that get the max value of id in table that received by arguments
 #table => table in data base to get the max value
 #id_table => field of table in data base that will be used as referenced to get the max value
@@ -138,6 +153,22 @@ def DeleteDB(query):
 		print 'Error %s', e
 		sys.exit(1)
 
+<<<<<<< HEAD
+#funtion that allow generate a delete of element in data base
+#query => is the query whit information for delete element in data base
+def DeleteDB_WithOutMessage(query):
+
+	#start connection whit data base
+	database = Comunication.BeginComunication()
+	try:#error and validation
+		database[1].execute(query)#execute query
+		database[0].commit()#commit the data base
+	except psycopg2.DatabaseError, e:
+		print 'Error %s', e
+		sys.exit(1)
+
+=======
+>>>>>>> 02c3ebb0958c363c2794afd4063fb21fbbed3589
 #funtion that allow generate a update of element in data base
 #query => is the query whit information for update element in data base
 def UpdateDB(query):
@@ -152,6 +183,21 @@ def UpdateDB(query):
 		print 'Error %s', e
 		sys.exit(1)
 
+<<<<<<< HEAD
+#funtion that allow generate a update of element in data base
+#query => is the query whit information for update element in data base
+def UpdateDBWithOutMessage(query):
+
+	#start connection whit data base
+	database = Comunication.BeginComunication()
+	try:#error and validation
+		database[1].execute(query)#execute query
+		database[0].commit()#commit the data base
+	except psycopg2.DatabaseError, e:
+		print 'Error %s', e
+		sys.exit(1)
+=======
+>>>>>>> 02c3ebb0958c363c2794afd4063fb21fbbed3589
 #function that allow return a list whit information of one device according its serial
 #serial => serial of device that allow search its information in data base.
 def GetInforDeviceBySerial(serial):

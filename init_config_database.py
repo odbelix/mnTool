@@ -8,6 +8,10 @@
 # "user", "david2"
 # "password", "12345"
 # 
+<<<<<<< HEAD
+# and write configuration of comunity for get information of SNMP
+=======
+>>>>>>> 02c3ebb0958c363c2794afd4063fb21fbbed3589
 # Copyright (C) David Alfredo Medina Ortiz  dmedina11@alumnos.utalca.cl
 #
 # This program is free software; you can redistribute it and/or modify
@@ -26,6 +30,10 @@
 
 import ConfigParser  
 import os
+<<<<<<< HEAD
+import sys
+=======
+>>>>>>> 02c3ebb0958c363c2794afd4063fb21fbbed3589
 
 #function that allow evaluate if exist directory or not
 def ExistDirectory():
@@ -42,9 +50,21 @@ def main ():
 	cfg.add_section("connection")#add section
 	#add element to secction, edit this section if set atributes of connection
 	cfg.set("connection", "host", "localhost")
+<<<<<<< HEAD
+	cfg.set("connection", "data_base", "migrate1")
+	cfg.set("connection", "user", "david")
+	cfg.set("connection", "password", "95234360")
+
+	cfg.add_section("SNMP")
+	if len (sys.argv)>1:
+		cfg.set("SNMP", "comunity", sys.argv[1])
+	else:
+		cfg.set("SNMP", "comunity", "null")
+=======
 	cfg.set("connection", "data_base", "export")
 	cfg.set("connection", "user", "david2")
 	cfg.set("connection", "password", "12345")
+>>>>>>> 02c3ebb0958c363c2794afd4063fb21fbbed3589
 	ExistDirectory()#evaluate if exists directory
 	os.system("mkdir mn_Tools")#create directory
 	os.system("cd mn_Tools")#go to new directory
@@ -56,4 +76,8 @@ def main ():
 	return 0
 
 if __name__ == '__main__':
+<<<<<<< HEAD
 	main()
+=======
+	main()
+>>>>>>> 02c3ebb0958c363c2794afd4063fb21fbbed3589

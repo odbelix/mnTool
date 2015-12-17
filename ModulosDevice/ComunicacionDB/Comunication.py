@@ -77,4 +77,19 @@ def MakeQueryDB (query, database_cursor):
         return response
     except psycopg2.DatabaseError, e:
         print 'Error %s', e
+<<<<<<< HEAD
         sys.exit(1)
+
+#function that manages query of kind delete or insert in data base
+def QueryDB(query, database_cursor, connection):
+
+    try:
+        database_cursor.execute(query)
+        connection.commit()
+        return 0
+    except psycopg2.DatabaseError, e:
+        print 'Error %s', e
+        sys.exit(1)
+=======
+        sys.exit(1)
+>>>>>>> 02c3ebb0958c363c2794afd4063fb21fbbed3589

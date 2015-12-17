@@ -25,6 +25,12 @@ setup(name='DevelopedDevice', version='Version 1',
     author='David Medina',
     author_email='dmedina11@alumnos.utalca.cl',
     license='Licencia',
+<<<<<<< HEAD
+    packages=['ModulosDevice', 'ModulosDevice.ComunicacionDB', 'ModulosDevice.GenerationTree', 'ModulosDevice.Cruds', 'ModulosDevice.UpdateDevice', 'ModulosDevice.Configuration'],
+    scripts=['bin/mntools'],
+    )
+=======
     packages=['ModulosDevice', 'ModulosDevice.ComunicacionDB', 'ModulosDevice.GenerationTree', 'ModulosDevice.Cruds'],
     scripts=['bin/mntools'],
     )
+>>>>>>> 02c3ebb0958c363c2794afd4063fb21fbbed3589

@@ -20,10 +20,23 @@
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 import os
+<<<<<<< HEAD
+import sys
+
+def main():
+
+	os.system("python setup.py install")#exceute setup and install elements in lib and exec in bin
+	if len(sys.argv)>1:
+		command = "python init_config_database.py %s" % sys.argv[1]
+	else:
+		command = "python init_config_database.py"
+	os.system(command)#create file configuration of connection whit data base.
+=======
 
 def main():
 	os.system("python setup.py install")#exceute setup and install elements in lib and exec in bin
 	os.system("python init_config_database.py")#create file configuration of connection whit data base.
+>>>>>>> 02c3ebb0958c363c2794afd4063fb21fbbed3589
 	return 0
 if __name__ == '__main__':
 	main()

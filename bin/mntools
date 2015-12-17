@@ -28,11 +28,24 @@
 import argparse
 import sys
 import os
+<<<<<<< HEAD
+import ConfigParser
+
+=======
+>>>>>>> 02c3ebb0958c363c2794afd4063fb21fbbed3589
 from ModulosDevice.Cruds import Query
 from ModulosDevice.Cruds import delete
 from ModulosDevice.Cruds import update
 from ModulosDevice.GenerationTree import MakeTreeFull
 from ModulosDevice.GenerationTree import MakeTreeDispositivos
+<<<<<<< HEAD
+from ModulosDevice.GenerationTree import GenerationTreeDevice
+from ModulosDevice.UpdateDevice import Reportes
+from ModulosDevice.UpdateDevice import GenerateTreeUpdate
+from ModulosDevice.UpdateDevice import ReporteHistorial
+from ModulosDevice.Configuration import configOption
+=======
+>>>>>>> 02c3ebb0958c363c2794afd4063fb21fbbed3589
 
 #validate if is possible cast input to int, return o element cast to int, in other case exit program
 def ValidateInput(input_element):
@@ -60,10 +73,43 @@ def CreateHelpMessage():
 
 	return help_message
 
+<<<<<<< HEAD
+#function that check if user is root or not
+def CheckUser():
+	if os.geteuid() != 0:
+		print 'You must be user root'
+		sys.exit(1)
+
+#check conditions for comunity in file configuration
+def CheckFileConfiguration():
+
+	cfg = ConfigParser.ConfigParser()
+	cfg.read(["/etc/mn_Tools/db_configuration.cfg"])#read information params in fiel configuration
+
+	if cfg.get("SNMP", "comunity") == "null":
+
+		#check if is user root
+		CheckUser()
+		print "Input comunity for connection with SNMP "
+		comunity = raw_input(">> ")
+
+		cfg.set("SNMP", "comunity", comunity)
+		f = open("/etc/mn_Tools/db_configuration.cfg", "w")#create file configuration
+		cfg.write(f)
+		exit(0)
+
+#principal function
+def main ():
+
+	CheckFileConfiguration()#check configuration option
+
+		#instance of argparse
+=======
 #principal function
 def main ():
 
 	#instance of argparse
+>>>>>>> 02c3ebb0958c363c2794afd4063fb21fbbed3589
 	parser = argparse.ArgumentParser(
 	formatter_class=argparse.RawDescriptionHelpFormatter,
 	description="mnTools - Options",
@@ -120,6 +166,30 @@ def main ():
 	parser.add_argument("-td", "--tree_device", help="Create tree all device", action="store_true")
 	parser.add_argument("-ft", "--tree_full", help="Create tree with all information in data base", action="store_true")
 
+<<<<<<< HEAD
+	#####new options...
+	#add report option
+	parser.add_argument("-rip", "--report_ip", help="Generate Report by IP address")
+	parser.add_argument("-ripfull", "--report_ip_full", help="Generate Report by IP address with name of ")
+	parser.add_argument("-riperrmac", "--report_ip_err", help="Generate Report by IP address with error mac")
+	#parser.add_argument("-rs", "--report_serial", help="Generate Report by serial")
+	#parser.add_argument("-rf", "--report_full", help="Generate report full in csv format, include Serial, IP, Name, Model, APS, Switch, Router, TIP, Irregular Traffic", action="store_true")
+
+
+	'''
+	#add update information get SNMP options
+	parser.add_argument("-udn", "--update_device", help="Update all device by SNMP, this option requiered will be root user", action="store_true")
+	parser.add_argument("-usn", "--update_statdistics", help="Update statistics by SNMP, this option requiered will be root user", action="store_true")
+	'''
+	#add tree option of csv files...
+	parser.add_argument("-tIP", "--tree_ip", help="Create tree with device by IP, with switch and rowter")
+	parser.add_argument("-tIPF", "--tree_ip_full", help="Create tree with device by IP, with switch, rowter, TIP and AP")
+	
+	#configureoption option
+	parser.add_argument("-config", "--config_option", help="Set File configuration (must will be user root)", action="store_true")
+	
+=======
+>>>>>>> 02c3ebb0958c363c2794afd4063fb21fbbed3589
 	#Parse argv to args 
 	args = parser.parse_args()
 	
@@ -610,11 +680,46 @@ def main ():
 	#make tree all device
 	elif args.tree_device:
 		MakeTreeDispositivos.MakeTreeDevice()
+<<<<<<< HEAD
+
+	#make report by ip address
+	elif args.report_ip:
+		ReporteHistorial.GenerateReportebyIP(args.report_ip)
+
+	#make report by ip address full
+	elif args.report_ip_full:
+		
+		ReporteHistorial.GenerateReporteFullbyIP(args.report_ip_full)
+
+	#error mac
+	elif args.report_ip_err:
+		ReporteHistorial.GenerateReporteErrMac(args.report_ip_err)
+
+	#make tree by IP with information without TIPs and APs
+	elif args.tree_ip:
+
+		GenerationTreeDevice.CreateTree(args.tree_ip)
+
+	#make tree by IP with information without TIPs and APs
+	elif args.tree_ip_full:
+
+		GenerationTreeDevice.CreateTreeFull(args.tree_ip_full)
+
+	#make configuration option
+	elif args.config_option:
+		CheckUser()
+		configOption.CreateConfiguration()
+
+	else:
+		#No set any argument
+		parser.print_help()
+=======
 	
 	else:
 		#No set any argument
 		parser.print_help()
 
+>>>>>>> 02c3ebb0958c363c2794afd4063fb21fbbed3589
 	return 0
 
 if __name__ == '__main__':
